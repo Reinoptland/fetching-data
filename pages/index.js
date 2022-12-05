@@ -3,14 +3,20 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
 
+const filters = ["blur", "mono", "sepia", "negative", "paint", "pixel"];
+
 export default function Home() {
   const [cat, setCat] = useState({});
+  const [filter, setFilter] = useState("pixel");
   // we start with no cat
   // then we fetch one, now we need save it!
   // then we display the cat
 
   async function fetchCat() {
-    const response = await fetch("https://cataas.com/cat?json=true");
+    // (blur, mono, sepia, negative, paint, pixel)
+    const response = await fetch(
+      `https://cataas.com/cat?json=true&filter=${filter}`
+    );
     const data = await response.json();
     console.log("SUCCES?", data);
     setCat(data);
@@ -21,12 +27,14 @@ export default function Home() {
   // 2. you pass an array, the "dependency array"
   // -> when should effect be executed _again_
   // -> [], means just once on load
+  // -> [filter], when the state of filter changes, execute the effect
   useEffect(() => {
     // perform some side effect
     fetchCat();
-  }, []);
+  }, [filter]);
   // fetchCat(); // not like this!
 
+  console.log("FILTER", filter);
   return (
     <div className={styles.container}>
       <Head>
@@ -38,6 +46,11 @@ export default function Home() {
       <main className={styles.main}>
         {cat.url ? <img src={`https://cataas.com${cat.url}`} /> : "Loading"}
         <button onClick={fetchCat}>Fetch a cat!</button>
+        <select onChange={(e) => setFilter(e.target.value)}>
+          {filters.map((filter) => (
+            <option key={filter}>{filter}</option>
+          ))}
+        </select>
       </main>
 
       <footer className={styles.footer}>
