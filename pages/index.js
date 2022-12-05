@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
@@ -15,6 +15,17 @@ export default function Home() {
     console.log("SUCCES?", data);
     setCat(data);
   }
+
+  // 1. you pass function (the effect)
+  // -> executed when the component loads
+  // 2. you pass an array, the "dependency array"
+  // -> when should effect be executed _again_
+  // -> [], means just once on load
+  useEffect(() => {
+    // perform some side effect
+    fetchCat();
+  }, []);
+  // fetchCat(); // not like this!
 
   return (
     <div className={styles.container}>
